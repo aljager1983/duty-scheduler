@@ -11,8 +11,7 @@ let clicked = null;
 //if it does not exists, gives and empty array "[]""
 let events = localStorage.getItem( 'events') ? JSON.parse(localStorage.getItem('events')) : [];
 
-//below helps how many and where the padding days will be
-const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
 
 //access the calendar in the DOM
 const calendar = document.getElementById('calendar');
@@ -21,6 +20,10 @@ const newEventModal = document.getElementById('newEventModal');
 const deleteEventModal = document.getElementById('deleteEventModal');
 const backDrop = document.getElementById('modalBackDrop');
 const eventTitleInput = document.getElementById('eventTitleInput');
+
+
+//below helps how many and where the padding days will be
+const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 //Opens a model everytime a click event,, accepts date as an argument-- because
 //we need to know which date the user clicked on before we show modal
@@ -35,7 +38,7 @@ function openModal(date) {
   if(eventForDay) {
     //1. set the event text (re: deleting entry in the calendar)
     document.getElementById('eventText').innerText = eventForDay.title;
-    deleteEventModal.style.display = 'block;'
+    deleteEventModal.style.display = 'block';
   } else {
     newEventModal.style.display = 'block';
   }
@@ -51,7 +54,7 @@ function load() {
    
   };
 
- 
+  const day = dt.getDate();
   //throws 0 for january since date is in index value like in array
   const month = dt.getMonth();
   const year = dt.getFullYear();
@@ -98,6 +101,12 @@ function load() {
 
       //const for the newly saved events
       const eventForDay = events.find(e => e.date === dayString);
+
+      //current day checking and to be highlighted for the current month(nav === 0)
+      if(i - paddingDays === day && nav === 0) {
+        daySquare.id = 'currentDay';
+      }
+
       if(eventForDay)  {
         const eventDiv = document.createElement('div');
         eventDiv.classList.add('event')
@@ -122,7 +131,7 @@ function closeModal() {
   newEventModal.style.display = 'none';
   deleteEventModal.style.display = 'none';
   backDrop.style.display = 'none';
-  eventTitleInput.value = '';
+  eventTitleInput.value = ' ';
   clicked = null;
   load();
 }
@@ -146,7 +155,7 @@ function saveEvent() {
 
 //function for deleting event entered inthe calendar
 //i.e. reset events equal to all of the events except for the one were deleting
-function deleteEvent () {
+function deleteEvent() {
   events = events.filter(e => e.date !== clicked);  //deleting it in the array
   //and deleting in the local storage
   localStorage.setItem('events', JSON.stringify(events));
@@ -160,14 +169,14 @@ function initButtons() {
     //increments on the clicks and loads() at the same time
     nav++;
     load();
-  })
+  });
 
   document.getElementById('backButton').addEventListener('click', () => {
     
     //derements on the clicks i.e. back button)
     nav--;
     load();
-  })
+  });
 
   //below 2 eventlisteners are for the Event schedulers in calendar like for organizers
   document.getElementById('saveButton').addEventListener('click', saveEvent);
